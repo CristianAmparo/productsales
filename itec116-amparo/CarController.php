@@ -20,6 +20,7 @@ class CarController
     {
         global $pdo;
         $data = json_decode(file_get_contents("php://input"), true);
+        
 
         $stmt = $pdo->prepare("INSERT INTO cars (make, model, year, price, color, mileage, engine_type, transmission_type) 
                               VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -152,5 +153,3 @@ class CarController
         echo json_encode(['message' => 'Car deleted successfully']);
     }
 }
-
-?>

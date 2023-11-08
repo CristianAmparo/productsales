@@ -2,7 +2,8 @@
 
 class ExpenseController
 {
-    public function test() {
+    public function test()
+    {
         http_response_code(400);
         echo json_encode(['Welcome to my API']);
     }
@@ -10,39 +11,76 @@ class ExpenseController
     public function index()
     {
         global $pdo;
-        $stmt = $pdo->query("SELECT * FROM products_tbl");
-        $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($cars);
+        try {
+            $stmt = $pdo->query("SELECT * FROM product_tbl");
+            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($products);
+        } catch (PDOException $error) { // Catch exceptions of type PDOException
+            echo json_encode(["error" => "Something Wrong", "desc" => $error->getMessage()]);
+        }
     }
+
 
     public function store()
     {
         global $pdo;
-
         $data = json_decode(file_get_contents("php://input"), true);
-
-        $stmt = $pdo->prepare("INSERT INTO products_tbl (name, category, price, quantity) 
-                              VALUES (?, ?, ?, ?)");
-
-        $stmt->execute([$data["name"], $data["category"], $data["price"], $data["quantity"]]);
-
-        echo json_encode(["message" => "Expenses added successfully"]);
+        if (!isset($data['name']) || !isset($data['category']) || !isset($data['price']) || !isset($data['quantity'])) {
+            echo json_encode(['error' => 'Please complete all the fields']);
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO product_tbl (name, category, price, quantity) 
+                                VALUES (?, ?, ?, ?)");
+            $stmt->execute([$data["name"], $data["category"], $data["price"], $data["quantity"]]);
+            echo json_encode(["message" => "Expenses added successfully"]);
+        }
     }
+
+    public function getSales()
+    {
+        global $pdo;
+        try {
+            $stmt = $pdo->query("SELECT * FROM sales_tbl");
+            $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($sales);
+        } catch (PDOException $error) { // Catch exceptions of type PDOException
+            echo json_encode(["error" => "Something Wrong", "desc" => $error->getMessage()]);
+        }
+    }
+
     public function outgoing()
     {
         global $pdo;
 
         $data = json_decode(file_get_contents("php://input"), true);
+        if (!isset($data["product_id"]) || !isset($data["quantity"]) || !isset($data["total_amount"])) {
+            echo json_encode(['error' => 'Please complete all the fields']);
+        } else {
+            // Insert sales in sales_tbl
+            $stmt = $pdo->prepare("INSERT INTO sales_tbl (product_id, quantity, total_amount) VALUES (?, ?, ?)");
+            $stmt->execute([$data["product_id"], $data["quantity"], $data["total_amount"]]);
 
-        $stmt = $pdo->prepare("INSERT INTO sales_tbl (product_id, quantity, total_amount) 
-                              VALUES (?, ?, ?)");
+            // Select the product information of the sales product id
+            $stmt = $pdo->prepare("SELECT * FROM product_tbl WHERE id = ?");
+            $stmt->execute([$data["product_id"]]); // Wrap in an array
 
-        $stmt->execute([$data["product_id"], $data["quantity"], $data["total_amount"]]);
+            $product = $stmt->fetch(PDO::FETCH_ASSOC); // Use fetch() to get a single row
 
-        echo json_encode(["message" => "sales added"]);
+            // Calculate the updated quantity and price of product
+            $deductedQuantity = $product["quantity"] - $data["quantity"];
+            $deductedPrice = $product["price"] - ($data["quantity"] * $data["total_amount"]);
+
+            // Prepare and execute the UPDATE statement for product_tbl
+            $stmt = $pdo->prepare("UPDATE product_tbl SET price = ?, quantity = ? WHERE id = ?");
+            $stmt->execute([$deductedPrice, $deductedQuantity, $data["product_id"]]);
+
+            echo json_encode(["message" => "Sales added"]);
+        }
     }
 
-    public function show($params) {
+
+
+    public function show($params)
+    {
         global $pdo;
 
         // Check if 'id' is present in the parameters
@@ -75,7 +113,8 @@ class ExpenseController
         echo json_encode($expense);
     }
 
-    public function destroy($params) {
+    public function destroy($params)
+    {
         global $pdo;
 
         // Check if 'id' is present in the parameters
@@ -96,10 +135,10 @@ class ExpenseController
 
         $stmt = $pdo->prepare("SELECT * FROM products_tbl WHERE id = ?");
         $stmt->execute([$id]);
-        
+
         $expense = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if(!$expense) {
+        if (!$expense) {
             http_response_code(404);
             echo json_encode(['error' => 'Expense not found']);
             return;
@@ -113,5 +152,3 @@ class ExpenseController
         echo json_encode(['message' => "Successfully deleted."]);
     }
 }
-
-?>

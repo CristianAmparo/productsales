@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.3.0-dev+20220811.d237752642
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 14, 2023 at 09:16 AM
--- Server version: 10.4.22-MariaDB
--- PHP Version: 7.4.26
+-- Generation Time: Nov 08, 2023 at 04:23 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,43 +18,41 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `api`
+-- Database: `itec116`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cars`
+-- Table structure for table `sales_tbl`
 --
 
-CREATE TABLE `cars` (
+CREATE TABLE `sales_tbl` (
   `id` int(11) NOT NULL,
-  `make` varchar(255) DEFAULT NULL,
-  `model` varchar(255) DEFAULT NULL,
-  `year` int(11) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `color` varchar(255) DEFAULT NULL,
-  `mileage` int(11) DEFAULT NULL,
-  `engine_type` varchar(255) DEFAULT NULL,
-  `transmission_type` varchar(255) DEFAULT NULL
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `total_amount` double(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `cars`
+-- Dumping data for table `sales_tbl`
 --
 
-INSERT INTO `cars` (`id`, `make`, `model`, `year`, `price`, `color`, `mileage`, `engine_type`, `transmission_type`) VALUES
-(1, 'toyota', 'camry', 1993, '998597.39', 'black', 0, 'V6', 'a'),
-(2, 'New Make', 'civic', 1994, '28000.00', 'black', 0, 'V6', 'a');
+INSERT INTO `sales_tbl` (`id`, `product_id`, `quantity`, `total_amount`) VALUES
+(1, 1, 2, 8.00),
+(2, 1, 2, 8.00),
+(3, 1, 2, 8.00),
+(4, 1, 2, 8.00),
+(5, 2, 3, 10.00);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `cars`
+-- Indexes for table `sales_tbl`
 --
-ALTER TABLE `cars`
+ALTER TABLE `sales_tbl`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -62,10 +60,10 @@ ALTER TABLE `cars`
 --
 
 --
--- AUTO_INCREMENT for table `cars`
+-- AUTO_INCREMENT for table `sales_tbl`
 --
-ALTER TABLE `cars`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `sales_tbl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

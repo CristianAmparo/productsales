@@ -2,22 +2,26 @@
 
 class Router
 {
-    private $root = '/itec116-amparo';
+    private $root = '/productsales/itec116-amparo';
     private $routes = [];
 
-    public function get($path, $callback) {
+    public function get($path, $callback)
+    {
         $this->addRoute('GET', $path, $callback);
     }
 
-    public function post($path, $callback) {
+    public function post($path, $callback)
+    {
         $this->addRoute('POST', $path, $callback);
     }
 
-    public function put($path, $callback) {
+    public function put($path, $callback)
+    {
         $this->addRoute('PUT', $path, $callback);
     }
 
-    public function delete($path, $callback) {
+    public function delete($path, $callback)
+    {
         $this->addRoute('DELETE', $path, $callback);
     }
 
@@ -74,5 +78,3 @@ class Router
         }
     }
 }
-
-?>
