@@ -133,7 +133,7 @@ class ExpenseController
             return;
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM products_tbl WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT * FROM product_tbl WHERE id = ?");
         $stmt->execute([$id]);
 
         $expense = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -144,7 +144,7 @@ class ExpenseController
             return;
         }
 
-        $stmt = $pdo->prepare("DELETE FROM expenses_tbl WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM product_tbl WHERE id = ?");
         $stmt->execute([$id]);
 
         $expense = $stmt->fetch(PDO::FETCH_ASSOC);
